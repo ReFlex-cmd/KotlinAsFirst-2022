@@ -68,7 +68,15 @@ fun minBiRoot(a: Double, b: Double, c: Double): Double {
  * Мой возраст. Для заданного 0 < n < 200, рассматриваемого как возраст человека,
  * вернуть строку вида: «21 год», «32 года», «12 лет».
  */
-fun ageDescription(age: Int): String = TODO()
+fun ageDescription(age: Int): String {
+    return when {
+        age % 100 in 5..19 -> "$age лет"
+        age % 10 == 1 -> "$age год"
+        age % 10 in 2..4 -> "$age года"
+        age % 10 in 5..9 -> "$age лет"
+        else -> "$age лет"
+    }
+}
 
 /**
  * Простая (2 балла)
@@ -81,12 +89,25 @@ fun timeForHalfWay(
     t1: Double, v1: Double,
     t2: Double, v2: Double,
     t3: Double, v3: Double
-): Double = TODO()
+): Double {
+    val s1 = v1 * t1
+    val s2 = v2 * t2
+    val s3 = v3 * t3
+    //val FullWay = (s1 +s2 +s3)
+    val halfway = (s1 + s2 + s3) / 2.0
+    //val MediumSpeed = (s1 + s2 + s3) / (t1 +t2 + t3)
+    //val Time = (FullWay / MediumSpeed)
+    //val HalfTime = (HalfWay) / (MediumSpeed / 2.0)
+    return if (halfway <= s1) halfway / v1
+    else if (halfway <= (s1 + s2)) t1 + (halfway - s1) / v2
+    else if (halfway >= (s1 + s2)) t1 + t2 + (halfway - s1 - s2) / v3
+    else 10.0
+}
 
 /**
  * Простая (2 балла)
  *
- * Нa шахматной доске стоят черный король и две белые ладьи (ладья бьет по горизонтали и вертикали).
+ * На шахматной доске стоят черный король и две белые ладьи (ладья бьет по горизонтали и вертикали).
  * Определить, не находится ли король под боем, а если есть угроза, то от кого именно.
  * Вернуть 0, если угрозы нет, 1, если угроза только от первой ладьи, 2, если только от второй ладьи,
  * и 3, если угроза от обеих ладей.
@@ -96,7 +117,19 @@ fun whichRookThreatens(
     kingX: Int, kingY: Int,
     rookX1: Int, rookY1: Int,
     rookX2: Int, rookY2: Int
-): Int = TODO()
+): Int {
+    return when {
+        kingX == rookX1 && kingX == rookX2 ||
+                kingX == rookX1 && kingY == rookY2 ||
+                kingY == rookY1 && kingX == rookX2 ||
+                kingY == rookY1 && kingY == rookY2 -> 3
+
+        kingX == rookX1 || kingY == rookY1 -> 1
+        kingX == rookX2 || kingY == rookY2 -> 2
+
+        else -> 0
+    }
+}
 
 /**
  * Простая (2 балла)
@@ -112,7 +145,14 @@ fun rookOrBishopThreatens(
     kingX: Int, kingY: Int,
     rookX: Int, rookY: Int,
     bishopX: Int, bishopY: Int
-): Int = TODO()
+): Int {
+    return when {
+        kingX == rookX || kingY == rookY -> 1
+
+
+        else -> 0
+    }
+}
 
 /**
  * Простая (2 балла)
