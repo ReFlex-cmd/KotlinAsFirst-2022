@@ -3,8 +3,10 @@
 package lesson2.task1
 
 import lesson1.task1.discriminant
+import kotlin.math.abs
 import kotlin.math.max
 import kotlin.math.sqrt
+import kotlin.math.pow
 
 // Урок 2: ветвления (здесь), логический тип (см. 2.2).
 // Максимальное количество баллов = 6
@@ -146,12 +148,10 @@ fun rookOrBishopThreatens(
     rookX: Int, rookY: Int,
     bishopX: Int, bishopY: Int
 ): Int {
-    return when {
-        kingX == rookX || kingY == rookY -> 1
-
-
-        else -> 0
-    }
+    var check = 0
+    if (kingX == rookX || kingY == rookY) check = 1
+    if (abs(kingX - bishopX) == abs(kingY - bishopY)) check += 2
+    return check
 }
 
 /**
@@ -162,7 +162,31 @@ fun rookOrBishopThreatens(
  * прямоугольным (вернуть 1) или тупоугольным (вернуть 2).
  * Если такой треугольник не существует, вернуть -1.
  */
-fun triangleKind(a: Double, b: Double, c: Double): Int = TODO()
+fun triangleKind(a: Double, b: Double, c: Double): Int {
+    val maxSide = maxOf(a, b, c)
+    val minSide = minOf(a, b, c)
+    val perimeter = a + b + c
+    val thirdSide = perimeter - maxSide - minSide
+    return when {
+        maxSide >= minSide + thirdSide -> -1
+        maxSide.pow(2.0) == minSide.pow(2.0) + thirdSide.pow(2.0) -> 1
+        maxSide.pow(2.0) < minSide.pow(2.0) + thirdSide.pow(2.0) -> 0
+        else -> 2
+    }
+
+    /*    return when {
+            a + b < c || a + c < b || b + c < a -> -1
+            a.pow(2.0) + b.pow(2.0) > c.pow(2.0) ||
+                    b.pow(2.0) + c.pow(2.0) > a.pow(2.0) ||
+                    a.pow(2.0) + c.pow(2.0) > b.pow(2.0) -> 0
+
+            a.pow(2.0) + b.pow(2.0) == c.pow(2.0) ||
+                    b.pow(2.0) + c.pow(2.0) == a.pow(2.0) ||
+                    a.pow(2.0) + c.pow(2.0) == b.pow(2.0) -> 1
+
+            else -> 2
+        }*/
+}
 
 /**
  * Средняя (3 балла)
@@ -172,4 +196,8 @@ fun triangleKind(a: Double, b: Double, c: Double): Int = TODO()
  * Найти длину пересечения отрезков AB и CD.
  * Если пересечения нет, вернуть -1.
  */
-fun segmentLength(a: Int, b: Int, c: Int, d: Int): Int = TODO()
+fun segmentLength(a: Int, b: Int, c: Int, d: Int): Int {
+    val lenght = minOf(b, d) - maxOf(a, c)
+    return if (lenght >= 0) lenght
+    else return -1
+}
