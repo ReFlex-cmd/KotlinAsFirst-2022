@@ -3,11 +3,7 @@
 package lesson2.task2
 
 import lesson1.task1.sqr
-import lesson1.task1.discriminant
-import kotlin.math.abs
-import kotlin.math.max
-import kotlin.math.sqrt
-import kotlin.math.pow
+import kotlin.math.*
 
 /**
  * Пример
@@ -46,7 +42,16 @@ fun queenThreatens(x1: Int, y1: Int, x2: Int, y2: Int): Boolean =
  * Дан номер месяца (от 1 до 12 включительно) и год (положительный).
  * Вернуть число дней в этом месяце этого года по григорианскому календарю.
  */
-fun daysInMonth(month: Int, year: Int): Int = TODO()
+fun daysInMonth(month: Int, year: Int): Int {
+    val smallMonth = listOf(4, 6, 9, 11)
+    //val leapYear = ((year % 4 == 0 && year % 100 != 0) || year % 400 == 0)
+    return when {
+        (month == 2 && ((year % 4 == 0 && year % 100 != 0) || year % 400 == 0)) -> 29
+        (month in smallMonth) -> 30
+        month == 2 -> 28
+        else -> 31
+    }
+}
 
 /**
  * Простая (2 балла)
@@ -69,4 +74,10 @@ fun circleInside(
  * кирпич 4 х 4 х 4 пройдёт через отверстие 4 х 4.
  * Вернуть true, если кирпич пройдёт
  */
-fun brickPasses(a: Int, b: Int, c: Int, r: Int, s: Int): Boolean = TODO()
+fun brickPasses(a: Int, b: Int, c: Int, r: Int, s: Int): Boolean {
+    val maxSide = maxOf(a, b, c)
+    val minSide = minOf(a, b, c)
+    val suOfSides = a + b + c
+    val thirdSide = suOfSides - maxSide - minSide
+    return (minSide <= r && thirdSide <= s) || (minSide <= s && thirdSide <= r)
+}

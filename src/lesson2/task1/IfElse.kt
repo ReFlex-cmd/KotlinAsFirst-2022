@@ -70,14 +70,12 @@ fun minBiRoot(a: Double, b: Double, c: Double): Double {
  * Мой возраст. Для заданного 0 < n < 200, рассматриваемого как возраст человека,
  * вернуть строку вида: «21 год», «32 года», «12 лет».
  */
-fun ageDescription(age: Int): String {
-    return when {
-        age % 100 in 5..19 -> "$age лет"
-        age % 10 == 1 -> "$age год"
-        age % 10 in 2..4 -> "$age года"
-        age % 10 in 5..9 -> "$age лет"
-        else -> "$age лет"
-    }
+fun ageDescription(age: Int): String = when {
+    age % 100 in 5..19 -> "$age лет"
+    age % 10 == 1 -> "$age год"
+    age % 10 in 2..4 -> "$age года"
+    age % 10 in 5..9 -> "$age лет"
+    else -> "$age лет"
 }
 
 /**
@@ -100,10 +98,11 @@ fun timeForHalfWay(
     //val MediumSpeed = (s1 + s2 + s3) / (t1 +t2 + t3)
     //val Time = (FullWay / MediumSpeed)
     //val HalfTime = (HalfWay) / (MediumSpeed / 2.0)
-    return if (halfway <= s1) halfway / v1
-    else if (halfway <= (s1 + s2)) t1 + (halfway - s1) / v2
-    else if (halfway >= (s1 + s2)) t1 + t2 + (halfway - s1 - s2) / v3
-    else 10.0
+    return when {
+        halfway <= s1 -> halfway / v1
+        halfway <= s1 + s2 -> t1 + (halfway - s1) / v2
+        else -> t1 + t2 + (halfway - s2 - s1) / v3
+    }
 }
 
 /**
@@ -199,5 +198,5 @@ fun triangleKind(a: Double, b: Double, c: Double): Int {
 fun segmentLength(a: Int, b: Int, c: Int, d: Int): Int {
     val lenght = minOf(b, d) - maxOf(a, c)
     return if (lenght >= 0) lenght
-    else return -1
+    else -1
 }
