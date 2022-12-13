@@ -3,9 +3,9 @@
 package lesson4.task1
 
 import lesson1.task1.discriminant
-import lesson1.task1.thirdDigit
 import ru.spbstu.ktuples.zip
-import kotlin.math.*
+import kotlin.math.pow
+import kotlin.math.sqrt
 
 // Урок 4: списки
 // Максимальное количество баллов = 12
@@ -292,25 +292,26 @@ fun roman(n: Int): String {
     var x = n
     if (x >= 1000) {
         val firstDigit = x / 1000 % 10
-        result.add(thousands[firstDigit - 1])
+        result += thousands[firstDigit - 1]
         x -= 1000 * firstDigit
     }
     if (x >= 100) {
         val secondDigit = x / 100 % 10
-        result.add(hundreds[secondDigit - 1])
+        result += hundreds[secondDigit - 1]
         x -= 100 * secondDigit
     }
     if (x >= 10) {
         val thirdDigit = x / 10 % 10
-        result.add(tens[thirdDigit - 1])
+        result += tens[thirdDigit - 1]
         x -= 10 * thirdDigit
     }
     if (x > 0) {
         val lastDigit = x % 10
-        result.add(units[lastDigit - 1])
+        result += units[lastDigit - 1]
     }
     return result.joinToString(separator = "")
 }
+
 /**
  * Очень сложная (7 баллов)
  *
@@ -318,4 +319,111 @@ fun roman(n: Int): String {
  * Например, 375 = "триста семьдесят пять",
  * 23964 = "двадцать три тысячи девятьсот шестьдесят четыре"
  */
-fun russian(n: Int): String = TODO()
+fun russian(n: Int): String {
+    val units = listOf("один", "два", "три", "четыре", "пять", "шесть", "семь", "восемь", "девять")
+    val tens = listOf(
+        "одиннадцать",
+        "двенадцать",
+        "тринадцать",
+        "четырнадцать",
+        "пятнадцать",
+        "шестнадцать",
+        "семнадцать",
+        "восемнадцать",
+        "девятнадцать"
+    )
+    val secondTens = listOf(
+        "десять",
+        "двадцать",
+        "тридцать",
+        "сорок",
+        "пятьдесят",
+        "шестьдесят",
+        "семьдесят",
+        "восемьдесят",
+        "девяносто"
+    )
+    val hundreds =
+        listOf("сто", "двести", "триста", "четыреста", "пятьсот", "шестьсот", "семьсот", "восемьсот", "девятьсот")
+    val thousands = listOf(
+        "тысяч",
+        "одна тысяча",
+        "две тысячи",
+        "три тысячи",
+        "четыре тысячи",
+        "пять тысяч",
+        "шесть тысяч",
+        "семь тысяч",
+        "восемь тысяч",
+        "девять тысяч"
+    )
+    val result = StringBuilder()
+    var amountOfNumbers = n.toString().length
+    while (amountOfNumbers > 0) {
+        when (amountOfNumbers) {
+            1 -> {
+                if (n % 10 != 0) result.append(" ${units[n % 10 - 1]}")
+                break
+            }
+        }
+        when (amountOfNumbers) {
+            2 -> when (n % 100 / 10) {
+                1 -> {
+                    when (n % 10) {
+                        0 -> {
+                            result.append(secondTens[0])
+                            break
+                        }
+
+                        else -> {
+                            result.append(tens[n % 10 - 1])
+                            break
+                        }
+                    }
+                }
+
+                else -> {
+                    if (n % 100 / 10 != 0) result.append(" ${secondTens[n % 100 / 10 - 1]}")
+                    amountOfNumbers--
+                }
+            }
+        }
+        when (amountOfNumbers) {
+            3 -> {
+                if (n % 1000 / 100 != 0) result.append(" ${hundreds[n % 1000 / 100 - 1]}")
+                amountOfNumbers--
+            }
+        }
+        when (amountOfNumbers) {
+            4 -> {
+                if (n % 10000 / 1000 != 0) result.append(" ${thousands[n / 1000]}")
+                amountOfNumbers--
+            }
+        }
+        when (amountOfNumbers) {
+            5 -> amountOfNumbers -= when (n % 100000 / 10000) {
+                1 -> {
+                    if (n % 10000 / 1000 != 0) result.append(" ${tens[n % 10000 / 1000 - 1]} ${thousands[0]}")
+                    else result.append(" ${secondTens[0]} ${thousands[0]}}")
+                    2
+                }
+
+                else -> {
+                    if (n % 100000 / 10000 != 0) result.append(
+                        " ${secondTens[n % 100000 / 10000 - 1]} " +
+                                thousands[n % 10000 / 1000]
+                    )
+                    else result.append(" ${thousands[n % 10000 / 1000]}")
+                    2
+                }
+            }
+        }
+        when (amountOfNumbers) {
+            6 -> {
+                result.append(hundreds[n % 1000000 / 100000 - 1])
+                amountOfNumbers -= 1
+            }
+        }
+    }
+    return result.toString().trim()
+}

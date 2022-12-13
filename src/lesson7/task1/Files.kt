@@ -3,6 +3,7 @@
 package lesson7.task1
 
 import java.io.File
+import kotlin.math.max
 
 // Урок 7: работа с файлами
 // Урок интегральный, поэтому его задачи имеют сильно увеличенную стоимость
@@ -63,7 +64,18 @@ fun alignFile(inputName: String, lineLength: Int, outputName: String) {
  * Подчёркивание в середине и/или в конце строк значения не имеет.
  */
 fun deleteMarked(inputName: String, outputName: String) {
-    TODO()
+    var writer = File(outputName).bufferedWriter()
+    for (line in File(inputName).readLines()) {
+        when {
+            line.isEmpty() -> writer.newLine()
+            (line[0] != '_') -> {
+                writer.write(line)
+                writer.newLine()
+            }
+        }
+
+    }
+    writer.close()
 }
 
 /**
@@ -75,7 +87,12 @@ fun deleteMarked(inputName: String, outputName: String) {
  * Регистр букв игнорировать, то есть буквы е и Е считать одинаковыми.
  *
  */
-fun countSubstrings(inputName: String, substrings: List<String>): Map<String, Int> = TODO()
+fun countSubstrings(inputName: String, substrings: List<String>): Map<String, Int> {
+    val coincidences = mutableMapOf<String, Int>()
+    val listOfSubstrings = substrings.toSet().toList()
+    val line = File(inputName).readText().lowercase()
+TODO()
+}
 
 
 /**
@@ -113,7 +130,19 @@ fun sibilants(inputName: String, outputName: String) {
  *
  */
 fun centerFile(inputName: String, outputName: String) {
-    TODO()
+    val writer = File(outputName).bufferedWriter()
+    var max = 0
+    File(inputName).readLines().forEach { line ->
+        max = max(max, line.trim().length)
+    }
+    File(inputName).readLines().forEach { line ->
+        writer.write(buildString {
+            append(" ".repeat((max - line.trim().length) / 2))
+            append(line.trim())
+        })
+        writer.newLine()
+    }
+    writer.close()
 }
 
 /**
@@ -205,7 +234,28 @@ fun top20Words(inputName: String): Map<String, Int> = TODO()
  * Обратите внимание: данная функция не имеет возвращаемого значения
  */
 fun transliterate(inputName: String, dictionary: Map<Char, String>, outputName: String) {
-    TODO()
+    val writer = File(outputName).bufferedWriter()
+    var counter = 0
+    val index = File(inputName).readLines()
+    for (line in index) {
+        for (i in line.indices) {
+            counter = 0
+            for (j in dictionary) {
+                when {
+                    line[i].lowercaseChar() == j.key.lowercaseChar() -> {
+                        when {
+                            line[i].isLowerCase() || !(line[i].isLetter()) -> writer.write(j.value.lowercase())
+                            else -> writer.write(j.value.lowercase().capitalize())
+                        }
+                        counter = 1
+                    }
+                }
+            }
+            if (counter == 0) writer.write(line[i].toString())
+        }
+        writer.newLine()
+    }
+    writer.close()
 }
 
 /**

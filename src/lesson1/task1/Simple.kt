@@ -1,9 +1,6 @@
-@file:Suppress("UNUSED_PARAMETER")
-
 package lesson1.task1
 
 import kotlin.math.*
-import kotlin.math.sqrt
 
 // Урок 1: простые функции
 // Максимальное количество баллов = 5
@@ -130,8 +127,7 @@ fun accountInThreeYears(initial: Int, percent: Int): Double = initial * (1 + per
  */
 fun numberRevert(number: Int): Int {
     var n1 = number
-    var tempnum = 0
-    tempnum = number % 10
+    val tempnum: Int = number % 10
     n1 = number - tempnum + n1 / 100 - n1 / 100 * 100 + tempnum * 100
     return n1
 }

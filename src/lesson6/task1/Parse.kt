@@ -149,7 +149,16 @@ fun plusMinus(expression: String): Int = TODO()
  * Вернуть индекс начала первого повторяющегося слова, или -1, если повторов нет.
  * Пример: "Он пошёл в в школу" => результат 9 (индекс первого 'в')
  */
-fun firstDuplicateIndex(str: String): Int = TODO()
+fun firstDuplicateIndex(str: String): Int {
+    val valueOfLine = str.split(" ")
+    var counter = 0
+    for (i in 0 until valueOfLine.size - 1)
+        when {
+            valueOfLine[i].lowercase() == valueOfLine[i + 1].lowercase() -> return counter
+            else -> counter += valueOfLine[i].length + 1
+        }
+    return -1
+}
 
 /**
  * Сложная (6 баллов)
@@ -175,7 +184,29 @@ fun mostExpensive(description: String): String = TODO()
  *
  * Вернуть -1, если roman не является корректным римским числом
  */
-fun fromRoman(roman: String): Int = TODO()
+fun fromRoman(roman: String): Int {
+    if (!Regex("""[IVXLCDM]+""").matches(roman) || roman.isEmpty()) {
+        return -1
+    }
+
+    var result = 0
+    val romanToDec = mapOf('I' to 1, 'V' to 5, 'X' to 10, 'L' to 50, 'C' to 100, 'D' to 500, 'M' to 1000)
+    (0..roman.length - 2).forEach { i ->
+        when {
+            romanToDec[roman[i]]!! >= romanToDec[roman[i + 1]]!! -> {
+                result += romanToDec[roman[i]]!!
+            }
+
+            else -> {
+                result -= romanToDec[roman[i]]!!
+            }
+        }
+    }
+
+    result += romanToDec[roman.last()]!!
+
+    return result
+}
 
 /**
  * Очень сложная (7 баллов)

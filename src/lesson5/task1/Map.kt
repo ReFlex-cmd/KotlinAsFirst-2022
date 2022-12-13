@@ -2,6 +2,9 @@
 
 package lesson5.task1
 
+import java.lang.Integer.max
+import java.lang.Integer.parseInt
+
 // Урок 5: ассоциативные массивы и множества
 // Максимальное количество баллов = 14
 // Рекомендуемое количество баллов = 9
@@ -96,7 +99,14 @@ fun buildWordSet(text: List<String>): MutableSet<String> {
  *   buildGrades(mapOf("Марат" to 3, "Семён" to 5, "Михаил" to 5))
  *     -> mapOf(5 to listOf("Семён", "Михаил"), 3 to listOf("Марат"))
  */
-fun buildGrades(grades: Map<String, Int>): Map<Int, List<String>> = TODO()
+fun buildGrades(grades: Map<String, Int>): Map<Int, List<String>> {
+    val result = mutableMapOf<Int, MutableList<String>>()
+    for ((name, grade) in grades) when {
+        result[grade] != null -> result[grade]?.add(name)
+        else -> result[grade] = mutableListOf(name)
+    }
+    return result
+}
 
 /**
  * Простая (2 балла)
@@ -108,7 +118,16 @@ fun buildGrades(grades: Map<String, Int>): Map<Int, List<String>> = TODO()
  *   containsIn(mapOf("a" to "z"), mapOf("a" to "z", "b" to "sweet")) -> true
  *   containsIn(mapOf("a" to "z"), mapOf("a" to "zee", "b" to "sweet")) -> false
  */
-fun containsIn(a: Map<String, String>, b: Map<String, String>): Boolean = TODO()
+fun containsIn(a: Map<String, String>, b: Map<String, String>): Boolean {
+    a.forEach { (key, value) ->
+        if (b[key] != value) {
+            return false
+        }
+    }
+    return true
+}
+// В общем-то подходит и решение "a + b == b", но я не уверен что его зачтут из-за отсутствия использования массивов.
+
 
 /**
  * Простая (2 балла)
@@ -135,7 +154,7 @@ fun subtractOf(a: MutableMap<String, String>, b: Map<String, String>) {
  * В выходном списке не должно быть повторяющихся элементов,
  * т. е. whoAreInBoth(listOf("Марат", "Семён, "Марат"), listOf("Марат", "Марат")) == listOf("Марат")
  */
-fun whoAreInBoth(a: List<String>, b: List<String>): List<String> = TODO()
+fun whoAreInBoth(a: List<String>, b: List<String>): List<String> = a.intersect(b.toSet()).toList()
 
 /**
  * Средняя (3 балла)
@@ -277,7 +296,20 @@ fun propagateHandshakes(friends: Map<String, Set<String>>): Map<String, Set<Stri
  *   findSumOfTwo(listOf(1, 2, 3), 4) -> Pair(0, 2)
  *   findSumOfTwo(listOf(1, 2, 3), 6) -> Pair(-1, -1)
  */
-fun findSumOfTwo(list: List<Int>, number: Int): Pair<Int, Int> = TODO()
+fun findSumOfTwo(list: List<Int>, number: Int): Pair<Int, Int> {
+    val secondMap = mutableMapOf<Int, Int>()
+    for ((i, j) in list.withIndex()) when {
+        secondMap[number - j] != null && j + j == number -> return secondMap[number - j]!! to i
+        else -> {
+            val delta = number - j
+            i.also { secondMap[delta] = it }
+            when {
+                secondMap[j] != null && j != delta -> return secondMap[j]!! to secondMap[delta]!!
+            }
+        }
+    }
+    return -1 to -1
+}
 
 /**
  * Очень сложная (8 баллов)
@@ -300,4 +332,35 @@ fun findSumOfTwo(list: List<Int>, number: Int): Pair<Int, Int> = TODO()
  *     450
  *   ) -> emptySet()
  */
-fun bagPacking(treasures: Map<String, Pair<Int, Int>>, capacity: Int): Set<String> = TODO()
+fun bagPacking(treasures: Map<String, Pair<Int, Int>>, capacity: Int): Set<String> {
+    val result = mutableSetOf<String>()
+    val treasureValues = treasures.values.toList()
+    val nameOfTreasures = treasures.keys.toList()
+    val pack = Array(treasures.size + 1) { Array(capacity + 1) { 0 } }
+    for (i in 1..treasures.size) {
+        for (j in 1..capacity) {
+            when {
+                treasureValues[i - 1].first <= j -> {
+                    pack[i][j] =
+                        max(pack[i - 1][j], pack[i - 1][j - treasureValues[i - 1].first] + treasureValues[i - 1].second)
+                }
+
+                else -> {
+                    pack[i][j] = pack[i - 1][j]
+                }
+            }
+        }
+    }
+    var size = treasures.size
+    var remainingSpace = capacity
+    while (size > 0) {
+        size--
+        when {
+            pack[size + 1][remainingSpace] != pack[size][remainingSpace] -> {
+                result.add(nameOfTreasures[size])
+                remainingSpace -= treasureValues[size].first
+            }
+        }
+    }
+    return result
+}
