@@ -2,6 +2,10 @@
 
 package lesson7.task1
 
+import ru.spbstu.wheels.NullableMonad.map
+import ru.spbstu.wheels.mapToArray
+import ru.spbstu.wheels.out
+import ru.spbstu.wheels.toMap
 import java.io.File
 import kotlin.math.max
 
@@ -64,7 +68,7 @@ fun alignFile(inputName: String, lineLength: Int, outputName: String) {
  * Подчёркивание в середине и/или в конце строк значения не имеет.
  */
 fun deleteMarked(inputName: String, outputName: String) {
-    var writer = File(outputName).bufferedWriter()
+    val writer = File(outputName).bufferedWriter()
     for (line in File(inputName).readLines()) {
         when {
             line.isEmpty() -> writer.newLine()
@@ -89,11 +93,17 @@ fun deleteMarked(inputName: String, outputName: String) {
  */
 fun countSubstrings(inputName: String, substrings: List<String>): Map<String, Int> {
     val coincidences = mutableMapOf<String, Int>()
-    val listOfSubstrings = substrings.toSet().toList()
-    val line = File(inputName).readText().lowercase()
-TODO()
+    val reader = File(inputName).readText().lowercase()
+    for (i in substrings) {
+        val counter = if (i == ".") {
+            Regex("""\.""").findAll(reader).count()
+        } else {
+            Regex("""(?=${i.lowercase()})""").findAll(reader).count()
+        }
+        coincidences[i] = counter
+    }
+    return coincidences
 }
-
 
 /**
  * Средняя (12 баллов)
@@ -109,8 +119,24 @@ TODO()
  *
  */
 fun sibilants(inputName: String, outputName: String) {
-    TODO()
-}
+
+} /*{
+    val writer = File(outputName).bufferedWriter()
+    val grammar = mapOf(
+        'Ы' to 'И', 'Я' to 'А', 'Ю' to 'У',
+        'ы' to 'и', 'я' to 'а', 'ю' to 'у')
+    var reader = File(inputName).readLines()
+    for (line in reader) {
+        var liner = line
+        val search = Regex("[жчшщ][ыяю]", RegexOption.IGNORE_CASE).findAll(line)
+        writer.use { i ->
+            search.forEach {
+                liner = line.replaceRange(it.range, "${it.value[0]}${grammar[it.value[1]]}")
+            }
+            i.write(liner)
+        }
+    }
+}*/
 
 /**
  * Средняя (15 баллов)
@@ -196,7 +222,12 @@ fun alignFileByWidth(inputName: String, outputName: String) {
  * Ключи в ассоциативном массиве должны быть в нижнем регистре.
  *
  */
-fun top20Words(inputName: String): Map<String, Int> = TODO()
+fun top20Words(inputName: String): Map<String, Int> { TODO()
+//    val indices = Regex("""[a-zа-яё]+""").findAll(File(inputName).readText().lowercase()).map { it.value }
+//        .groupBy { it }.map { it.key to it.value.count() }.sortedByDescending { it.second }.toMap()
+//    return if (indices.size < 21) indices
+//    else indices.mapToArray { it }.take(21).toMap()
+}
 
 /**
  * Средняя (14 баллов)
@@ -283,7 +314,18 @@ fun transliterate(inputName: String, dictionary: Map<Char, String>, outputName: 
  * Обратите внимание: данная функция не имеет возвращаемого значения
  */
 fun chooseLongestChaoticWord(inputName: String, outputName: String) {
-    TODO()
+    val list = File(inputName).readLines().filter { it.lowercase().toSet().size == it.length }.sortedByDescending { it.length }
+    val result = File(outputName).bufferedWriter()
+    var counter = 0
+    for (i in list) {
+        if (i.length == list[0].length) {
+            result.write(i)
+            if (counter == 0) result.write(", ")
+            counter ++
+        }
+    }
+
+    result.close()
 }
 
 /**
@@ -332,7 +374,16 @@ Suspendisse ~~et elit in enim tempus iaculis~~.
  * (Отступы и переносы строк в примере добавлены для наглядности, при решении задачи их реализовывать не обязательно)
  */
 fun markdownToHtmlSimple(inputName: String, outputName: String) {
-    TODO()
+    var text = File(inputName).readText()
+    text = text.replace(Regex("""[\t\r ]"""), "")
+    text = Regex("""(\*{2}(.*?)\*{2})""").replace(text, "<b>$1</b>")
+    text = text.replace("**", "")
+    text = Regex("""(\*(.*?)\*)""").replace(text, "<i>$1</i>")
+    text = text.replace("*", "")
+    text = Regex("""(\~{2}(.*?)\~{2})""").replace(text, "<s>$1</s>")
+    text = text.replace("~~", "")
+    text = text.replace(Regex("""\n{2}"""), "</p><p>")
+    File(outputName).writeText("<html><body><p>$text</p></body></html>")
 }
 
 /**

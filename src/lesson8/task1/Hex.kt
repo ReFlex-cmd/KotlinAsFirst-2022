@@ -2,6 +2,9 @@
 
 package lesson8.task1
 
+import kotlin.math.abs
+import kotlin.math.max
+
 /**
  * Точка (гекс) на шестиугольной сетке.
  * Координаты заданы как в примере (первая цифра - y, вторая цифра - x)
@@ -36,7 +39,17 @@ data class HexPoint(val x: Int, val y: Int) {
      * Расстояние вычисляется как число единичных отрезков в пути между двумя гексами.
      * Например, путь межу гексами 16 и 41 (см. выше) может проходить через 25, 34, 43 и 42 и имеет длину 5.
      */
-    fun distance(other: HexPoint): Int = TODO()
+    fun distance(other: HexPoint): Int {
+        val point1 = Point(x.toDouble(), y.toDouble())
+        val point2 = Point(other.x.toDouble(), other.y.toDouble())
+        val distance = point1.distance(point2)
+        return distance.toInt()
+    }
+    /* {
+            val maxXY = maxOf(abs(x - other.x), abs(y - other.y))
+            val abs = abs((x + y) - (other.x + other.y))
+            return maxOf(maxXY, abs)
+        }*/
 
     override fun toString(): String = "$y.$x"
 }
@@ -56,17 +69,22 @@ data class Hexagon(val center: HexPoint, val radius: Int) {
      * или 0, если шестиугольники имеют общую точку.
      *
      * Например, расстояние между шестиугольником A с центром в 31 и радиусом 1
-     * и другим шестиугольником B с центром в 26 и радиуоом 2 равно 2
+     * и другим шестиугольником B с центром в 26 и радиусом 2 равно 2
      * (расстояние между точками 32 и 24)
      */
-    fun distance(other: Hexagon): Int = TODO()
+    fun distance(other: Hexagon): Int {
+        val sumOfR = radius + other.radius
+        val distanceBetweenCenters = center.distance(other.center)
+        return if ((distanceBetweenCenters - sumOfR) < 0) 0
+        else distanceBetweenCenters - sumOfR
+    }
 
     /**
      * Тривиальная (1 балл)
      *
      * Вернуть true, если заданная точка находится внутри или на границе шестиугольника
      */
-    fun contains(point: HexPoint): Boolean = TODO()
+    fun contains(point: HexPoint): Boolean = center.distance(point) <= radius // bruh why it's failing test
 }
 
 /**
